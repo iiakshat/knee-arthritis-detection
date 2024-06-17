@@ -45,7 +45,6 @@ class PrepareBaseModel:
             metrics=["accuracy"]
         )
 
-        full_model.summary()
         return full_model
 
     def update_base_model(self):
@@ -58,8 +57,6 @@ class PrepareBaseModel:
         )
 
         self.save_model(path=self.config.updated_base_model_path, model=self.full_model)
-
-        self.full_model.summary()
 
     @staticmethod
     def save_model(path, model):
