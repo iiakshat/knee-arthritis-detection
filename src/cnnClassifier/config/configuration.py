@@ -5,12 +5,8 @@ from cnnClassifier.entity.config_entity import (DataIngestionConfig, PrepareBase
 class ConfigurationManager:
     def __init__(
         self,
-        # config_filepath = CONFIG_FILE_PATH,       
-        # params_filepath = PARAMS_FILE_PATH
-
-        config_filepath = '../config/config.yaml',
-        params_filepath = '../params.yaml'
-
+        config_filepath = CONFIG_FILE_PATH,       
+        params_filepath = PARAMS_FILE_PATH
     ):
         self.config = read_yaml(config_filepath)
         self.params = read_yaml(params_filepath)
