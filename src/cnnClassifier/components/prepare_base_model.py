@@ -18,11 +18,48 @@ class PrepareBaseModel:
 
         self.save_model(path=self.config.base_model_path, model=self.model)
 
+    def prepare_model(self):
+        
+        base_model = keras.applications.vgg16.VGG16(
+            input_shape=self.config.params_image_size,
+            weights=self.config.params_weights,
+            include_top=self.config.params_include_top
+        )
+
+        if self.config.params_include_top:
+            model_output = base_model.output
+        else:
+            flatten_in = keras.layers.Flatten()(base_model.output)
+            model_output = flatten_in
+
+        prediction = keras.layers.Dense(
+            units=self.config.params_classes,
+            activation="softmax"
+        )(model_output)
+
+        full_model = keras.models.Model(
+            inputs=base_model.input,
+            outputs=prediction
+        )
+
+        for layer in full_model.layers:
+            layer.trainable = False
+
+        optimizer = keras.optimizers.Adam(learning_rate=self.config.params_learning_rate)
+        full_model.compile(
+            optimizer=optimizer,
+            loss=keras.losses.CategoricalCrossentropy(),
+            metrics=["accuracy"]
+        )
+
+        self.full_model = full_model
+        self.save_model(path=self.config.updated_base_model_path, model=full_model)
+
     @staticmethod
     def create_model(model, classes, freeze_all, freeze_till, learning_rate):
         if freeze_all:
             for layer in model.layers:
-                model.trainable = False
+                layer.trainable = False
 
         elif (freeze_till is not None) and (freeze_till > 0):
             for layer in model.layers[:-freeze_till]:
@@ -39,8 +76,9 @@ class PrepareBaseModel:
             outputs=prediction
         )
 
+        optimizer = keras.optimizers.Adam(learning_rate=learning_rate)
         full_model.compile(
-            optimizer=keras.optimizers.SGD(learning_rate=learning_rate),
+            optimizer=optimizer,
             loss=keras.losses.CategoricalCrossentropy(),
             metrics=["accuracy"]
         )
