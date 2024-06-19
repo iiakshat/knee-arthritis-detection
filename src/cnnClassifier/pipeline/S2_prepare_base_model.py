@@ -12,8 +12,14 @@ class PrepareBaseModelTrainingPipeline:
         config = ConfigurationManager()
         prepare_base_model_config = config.get_model_config()
         prepare_base_model = PrepareBaseModel(config=prepare_base_model_config)
-        prepare_base_model.get_base_model()
-        prepare_base_model.update_base_model()
+
+        'Either Execute these two methods:'
+        # prepare_base_model.get_base_model()
+        # prepare_base_model.update_base_model()
+
+        'Or avoid them by directly calling prepare_model() method.'
+        prepare_base_model.prepare_model() 
+        
         prepare_base_model.full_model.summary()
 
 if __name__ == '__main__':
